@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+spec:
+  replicas: 4 # This runs TWO copies of your app for "High Availability"
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+      - name: fastapi-app
+        # This points to the image you pushed!
+        image: ghcr.io/vilishalobo/devops-pipeline-2026:latest
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  type: NodePort # This opens a port on your laptop to see the app
+  selector:
+    app: fastapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30001 # You will visit the app at localhost:30001
